@@ -8,14 +8,15 @@
 #define BUFFER_LEN 256
 
 int main(int argc, char** argv) {
-  if(argc != 3) {
-    fprintf(stderr, "Usage: %s <server name> <port>\n", argv[0]);
+  if(argc != 4) {
+    fprintf(stderr, "Usage: %s <user name> <server name> <port>\n", argv[0]);
     exit(1);
   }
 	
   // Read command line arguments
-  char* server_name = argv[1];
-  unsigned short port = atoi(argv[2]);
+  char* user_name = argv[1];
+  char* server_name = argv[2];
+  unsigned short port = atoi(argv[3]);
 	
   // Connect to the server
   int socket_fd = socket_connect(server_name, port);

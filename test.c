@@ -5,6 +5,8 @@ FSOUND_SAMPLE* handle;
 
 int main ()
 {
+
+  printf("test\n");
    // init FMOD sound system
    FSOUND_Init (44100, 32, 0);
 
