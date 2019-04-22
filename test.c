@@ -1,23 +1,22 @@
-#include <conio.h>
-#include "inc/fmod.h"
+//#include <iostream>
+#include <unistd.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
 
-FSOUND_SAMPLE* handle;
+int main () {
+   char command[50];
 
-int main ()
-{
-   // init FMOD sound system
-   FSOUND_Init (44100, 32, 0);
+   while(1){
 
-   // load and play mp3
-   handle=FSOUND_Sample_Load (0,"ice.mp3",0, 0, 0);
-   FSOUND_PlaySound (0,handle);
+   strcpy( command, "afplay music_library/ice.mp3 &" );
+   system(command);
 
-   // wait until the users hits a key to end the app
-   while (!_kbhit())
-   {
-   }
+   sleep(5);
 
-   // clean up
-   FSOUND_Sample_Free (handle);
-   FSOUND_Close();
-}
+   strcpy( command, "killall afplay" );
+   system(command);
+}   
+
+   return(0);
+} 
