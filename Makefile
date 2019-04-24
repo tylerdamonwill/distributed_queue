@@ -1,7 +1,7 @@
 CC := clang 
 CFLAGS := -g
 
-all: server client test
+all: server client test input
 
 clean:
 	rm -rf server client test server.dSYM client.dSYM
@@ -15,3 +15,5 @@ client: client.c
 test: test.c
 	$(CC) $(CFLAGS) -o test test.c
 
+input: inputTest.c
+	$(CC) $(CFLAGS) -o input inputTest.c
