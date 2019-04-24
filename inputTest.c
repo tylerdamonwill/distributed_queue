@@ -42,8 +42,8 @@ int main(int argc, char *argv[]) {
 	populateLibrary();
 
 	char command[50], extension[7];
-	strcpy(command, "afplay music_library/");
-	strcpy(extension, ".mp3 &");
+	strcpy(command, "mplayer music_library/");
+	strcpy(extension, ".mp3");
 
 	Song possibileSongs[TOTALSONGS];
 	int count = 0;

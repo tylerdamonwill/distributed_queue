@@ -14,6 +14,7 @@
 int main () {
 
    char command[50];
+warning: implicit declaration of function 'gets' is invalid in C99
 
    while(){
 
@@ -34,7 +35,12 @@ int main(int argc, char *argv[]) {
    char song[50];
 
    printf("Enter song: ");
-   gets(song);
+   fgets(song, sizeof(song), stdin);
+   for(int i = 49; i >= 0; i--){
+     if(song[i] == '\n'){
+       song[i] = '\0';
+     }
+   }
 
    char *args[] = {song, NULL};
 
