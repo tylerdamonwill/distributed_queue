@@ -33,14 +33,23 @@ Step 3 (Server side): Start the server
 ```
 ./server
 ```
-TO DO: Gif of server side
+TO DO: Gif on server side
 
 Step 3 (Server side): Start a client
 ```
 ./client
 ```
-TO DO: Client side
+TO DO: Gif on client side
 
+Step 4: Add a song to the queue
+```
+blah blah blah
+```
+
+Step 5: View songs in the queue
+```
+blah blah blah
+```
 ## Authors
 
 * **Anh Thu Pham** - (https://github.com/PhamAnhThu)
