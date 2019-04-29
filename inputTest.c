@@ -47,17 +47,23 @@ int main(int argc, char *argv[]) {
 
 	Song possibileSongs[TOTALSONGS];
 	int count = 0;
+	
+	char songName[sizeof(argv[0])];
+	int songCount;
 
-
-	for(int i = 0; argv[0][i]; i++){
-		argv[0][i] = tolower(argv[0][i]);
+	for(int i = 0; i < strlen(argv[0]); i++){
+		if(argv[0][i] != ' '){
+			songName[songCount] = tolower(argv[0][i]);
+			songCount++;
+		}
 	}
+
 
 	for(int i = 0; i < TOTALSONGS; i++){
 
-		char *check = strstr(songs[i].titleLower, argv[0]);
+		char *check = strstr(songs[i].filename, songName);
 
-		if(strcmp(argv[0], songs[i].titleLower) == 0) {
+		if(strcmp(songName, songs[i].filename) == 0) {
 			printf("Now Playing: %s by %s\n", songs[i].title, songs[i].artist);
 				//printf("PID of hello.c = %d\n", getpid());
 			strcat(command, songs[i].filename);
