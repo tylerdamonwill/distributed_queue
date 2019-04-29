@@ -26,9 +26,19 @@ git clone https://github.com/tylerdamonwill/distributed_queue.git
 Step 2: Run the Make file
 
 ```
-Make
+make
+```
+
+Step 3 (Server side): Start the server
+```
+./server
 ```
 TO DO: Gif of server side
+
+Step 3 (Server side): Start a client
+```
+./client
+```
 TO DO: Client side
 
 ## Authors
