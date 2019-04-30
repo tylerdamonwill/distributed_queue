@@ -38,6 +38,20 @@ void populateLibrary(){
 	strcpy(songs[3].artist, "J. Cole");
 }
 
+void removeSpaces(char *str) // https://www.geeksforgeeks.org/remove-spaces-from-a-given-string/
+{ 
+    // To keep track of non-space character count 
+    int count = 0; 
+  
+    // Traverse the given string. If current character 
+    // is not space, then place it at index 'count++' 
+    for (int i = 0; str[i]; i++) 
+        if (str[i] != ' ') 
+            str[count++] = str[i]; // here count is 
+                                   // incremented 
+    str[count] = '\0'; 
+} 
+
 int main(int argc, char *argv[]) {
 	populateLibrary();
 
@@ -48,22 +62,18 @@ int main(int argc, char *argv[]) {
 	Song possibileSongs[TOTALSONGS];
 	int count = 0;
 
-	char songName[sizeof(argv[0])];
-	int songCount;
 
-	for(int i = 0; i < strlen(argv[0]); i++){
-		if(argv[0][i] != ' '){
-			songName[songCount] = tolower(argv[0][i]);
-			songCount++;
-		}
-	}
+	removeSpaces(argv[0]);
+        printf("args %s\n", argv[0]);
+
+        //figuer this out tomorrow
 
 
 	for(int i = 0; i < TOTALSONGS; i++){
 
-		char *check = strstr(songs[i].filename, songName);
+		char *check = strstr(songs[i].filename, argv[0]);
 
-		if(strcmp(songName, songs[i].filename) == 0) {
+		if(strcmp(argv[0], songs[i].filename) == 0) {
 			printf("Now Playing: %s by %s\n", songs[i].title, songs[i].artist);
 				//printf("PID of hello.c = %d\n", getpid());
 			strcat(command, songs[i].filename);
