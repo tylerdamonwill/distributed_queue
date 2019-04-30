@@ -15,6 +15,17 @@
 
 //https://stackoverflow.com/questions/27306764/capturing-exit-status-code-of-child-process/27307246#27307246
 
+void lower_string(char *s) { //https://www.programmingsimplified.com/c/program/c-program-change-case
+   int c = 0;
+   
+   while (s[c] != '\0') {
+      if (s[c] >= 'A' && s[c] <= 'Z') {
+         s[c] = s[c] + 32;
+      }
+      c++;
+   }
+}
+
 void removeSpaces(char *str) // https://www.geeksforgeeks.org/remove-spaces-from-a-given-string/
 { 
   // To keep track of non-space character count 
@@ -55,15 +66,15 @@ void populateLibrary(){
   strcpy(songs[3].filename, "neighbors");
   strcpy(songs[3].artist, "J. Cole");
 
-  strcpy(songs[0].title, "Late");
-  strcpy(songs[0].filename, "late");
-  strcpy(songs[0].artist, "Tyler");
+  strcpy(songs[4].title, "Late");
+  strcpy(songs[4].filename, "late");
+  strcpy(songs[4].artist, "Tyler");
 }
 
 int main(int argc, char *argv[]) {
   populateLibrary();
   
-  char song[100], command[15], ext[5];
+  char song[100], command[100], ext[7];
 
   strcpy(command, "music_library/");
   strcpy(ext, ".mp3");
@@ -77,6 +88,7 @@ int main(int argc, char *argv[]) {
   }
 
   removeSpaces(song);
+  lower_string(song);
 
   Song possibileSongs[TOTALSONGS];
   int count = 0;
@@ -87,8 +99,8 @@ int main(int argc, char *argv[]) {
 
     if(strcmp(song, songs[i].filename) == 0) {
       printf("Now Playing: %s by %s\n", songs[i].title, songs[i].artist);
-      //printf("PID of hello.c = %d\n", getpid());
       strcat(command, song);
+
       strcat(command, ext);
   
       char *args[] = {"mplayer", command, NULL};
