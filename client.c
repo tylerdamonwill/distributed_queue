@@ -38,35 +38,45 @@ int main(int argc, char** argv) {
     exit(2);
   }
 
-
-  char message[BUFFER_LEN];
-  fgets(message, BUFFER_LEN, stdin);
-
-  while(strcmp(message, "quit\n")){
-
-    // Send a message to the server
-    fprintf(to_server, "%s", message);
+  // Print instructions of how to use the program
+  printf("\nHi, I'm a clever AI that handles the fun music queue you share with other cs students!\nTo add a song, type \"add <name of the song>\" ;\nTo quit, type \"quit\" \n");
   
-    // Flush the output buffer
-    fflush(to_server);
+  char write_message[BUFFER_LEN] = "";
+  char read_message[BUFFER_LEN];
+ 
+  while(strcmp(write_message, "quit\n")){
 
-    // Read a message from the server
-    char buffer[BUFFER_LEN];
-    if(fgets(buffer, BUFFER_LEN, from_server) == NULL) {
-      perror("Reading from server failed");
+    // Get inputs from stdin
+    if(fgets(write_message, BUFFER_LEN, stdin) == NULL) {
+      perror("Reading from client failed");
       exit(2);
     }
+    
+    // Make sure the input is not just '\n'
+    while (write_message[0] == '\n'){
+      printf("Don't send an empty message to the server, type \"add <name of the song>\" or \"quit\" \n");
+      fgets(write_message, BUFFER_LEN, stdin);
+    }
   
-    printf("Server: %s", buffer);
+    // if the input is add
+    if(write_message[0] == 'a' && write_message[1] == 'd' && write_message[2] == 'd'){
+      // Send the add message to the server
+      fprintf(to_server, "%s", write_message);
+  
+      // Flush the add message to_server buffer
+      fflush(to_server);
 
-    fgets(message, BUFFER_LEN, stdin);
+      // Read a message from the server
+      if(fgets(read_message, BUFFER_LEN, from_server) == NULL) {
+        perror("Reading from server failed");
+        exit(2);
+      }
+      printf("Server: %s", read_message);
+    }
   }
 
-  // Send a message to the server
-  fprintf(to_server, "%s", message);
-  
-  // Flush the output buffer
-  fflush(to_server);
+  // Send a useful quit message
+  printf("quitting...\n");  
   
   // Close file streams
   fclose(to_server);
