@@ -1,10 +1,10 @@
 CC := clang 
 CFLAGS := -g
 
-all: server client playSong
+all: server client tester
 
 clean:
-	rm -rf server client test server.dSYM client.dSYM
+	rm -rf server client tester server.dSYM client.dSYM
 
 server: server.c socket.h
 	$(CC) $(CFLAGS) -o server server.c -lpthread
@@ -12,5 +12,5 @@ server: server.c socket.h
 client: client.c
 	$(CC) $(CFLAGS) -o client client.c -lpthread
 
-playSong: playSong.c
-	$(CC) $(CFLAGS) -o play playSong.c
+tester: tester.c
+	$(CC) $(CFLAGS) -o tester tester.c
