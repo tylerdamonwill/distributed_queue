@@ -9,7 +9,7 @@
 #include <errno.h>   
 #include <sys/wait.h>
 
-#define TOTALSONGS 5
+#define TOTALSONGS 8
 
 //https://www.usna.edu/Users/cs/aviv/classes/ic221/s16/lec/14/lec.html
 
@@ -66,9 +66,21 @@ void populateLibrary(){
   strcpy(songs[3].filename, "neighbors");
   strcpy(songs[3].artist, "J. Cole");
 
-  strcpy(songs[4].title, "Late");
-  strcpy(songs[4].filename, "late");
-  strcpy(songs[4].artist, "Tyler");
+  strcpy(songs[4].title, "Old Town Road");
+  strcpy(songs[4].filename, "oldtownroad");
+  strcpy(songs[4].artist, "Lil Nas X");
+   
+  strcpy(songs[5].title, "22");
+  strcpy(songs[5].filename, "22");
+  strcpy(songs[5].artist, "Taylor Swift");
+   
+  strcpy(songs[6].title, "Formation");
+  strcpy(songs[6].filename, "formation");
+  strcpy(songs[6].artist, "Beyonce");
+   
+  strcpy(songs[7].title, "Sunflower");
+  strcpy(songs[7].filename, "sunflower");
+  strcpy(songs[7].artist, "Post Malone");
 }
 
 int main(int argc, char *argv[]) {
