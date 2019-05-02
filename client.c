@@ -3,6 +3,7 @@
 #include <stdlib.h>
 #include <unistd.h>
 
+#include "playSong.h"
 #include "socket.h"
 
 #define BUFFER_LEN 256
@@ -12,12 +13,12 @@ int main(int argc, char** argv) {
     fprintf(stderr, "Usage: %s <user name> <server name> <port>\n", argv[0]);
     exit(1);
   }
-	
+  
   // Read command line arguments
   char* user_name = argv[1];
   char* server_name = argv[2];
   unsigned short port = atoi(argv[3]);
-	
+  
   // Connect to the server
   int socket_fd = socket_connect(server_name, port);
   if(socket_fd == -1) {
@@ -60,16 +61,36 @@ int main(int argc, char** argv) {
   
     // if the input is add
     if(write_message[0] == 'a' && write_message[1] == 'd' && write_message[2] == 'd'){
+     write_message[0] = ' ';
+     write_message[1] = ' ';
+     write_message[2] = ' ';
+
+      if(inLibrary(write_message)){
       // Send the add message to the server
-      fprintf(to_server, "%s", write_message);
+      fprintf(to_server, "%s\n", write_message);
   
       // Flush the add message to_server buffer
       fflush(to_server);
+      } else {
+        fprintf(to_server, "%s\n", "Invalid input");
+  
+      // Flush the add message to_server buffer
+      fflush(to_server);
+    }
+              // Send the add message to the server
+      //fprintf(to_server, "%s", "Client entered invalid input");
+  
+      // Flush the add message to_server buffer
+     // fflush(to_server);
+     // printf("Here MOE\n");
+      //}
 
       // Read a message from the server
-      while(fgets(read_message, BUFFER_LEN, from_server) != NULL) {
-        printf("Clever AI: %s", read_message);
+      if(fgets(read_message, BUFFER_LEN, from_server) == NULL) {
+        perror("Reading from server failed");
+        exit(2);
       }
+      printf("Server: %s", read_message);
     }
   }
 
@@ -82,24 +103,6 @@ int main(int argc, char** argv) {
   
   // Close socket
   close(socket_fd);
-	
+  
   return 0;
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
