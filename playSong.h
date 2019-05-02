@@ -91,10 +91,8 @@ void playSong(char *song) {
     for(int i = 0; i < count; i++){
       printf("Did you mean '%s' by '%s'\n", possibileSongs[i].title, possibileSongs[i].artist);
     }
-    exit(2);//needs to change later
   } else if (count == 0){
     printf("Please enter a valid song\n");
-    exit(2);//needs to change later
   }
 
   return;
