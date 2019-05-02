@@ -1,6 +1,7 @@
 #include "populate.h"
 #include <stdio.h>
 #include <stdlib.h>
+#include <stdbool.h>
 #include <unistd.h>  
 #include <sys/wait.h>
 
@@ -52,7 +53,7 @@ void playSong(char *song) {
 
       strcat(command, ext);
   
-      char *args[] = {/*"afplay"*/"mplayer", command, NULL};
+      char *args[] = {"afplay", command, NULL};
 
       pid_t c_pid, pid;
       int status;
@@ -96,4 +97,39 @@ void playSong(char *song) {
   }
 
   return;
+}
+
+
+bool inLibrary(char *song) {
+  Song songs[TOTALSONGS];
+  populateLibrary(songs);
+  
+  removeSpacesandLowerCase(song);
+
+  Song possibileSongs[TOTALSONGS];
+  int count = 0;
+
+  for(int i = 0; i < TOTALSONGS; i++){
+
+    char *check = strstr(songs[i].filename, song);
+
+    if(strcmp(song, songs[i].filename) == 0) {
+      return true;
+    } else if (check != NULL) {
+      possibileSongs[count] = songs[i];
+      count++;
+    }
+  }
+
+  if(count != 0){
+    for(int i = 0; i < count; i++){
+      printf("Did you mean '%s' by '%s'\n", possibileSongs[i].title, possibileSongs[i].artist);
+    }
+          return false;
+  } else if (count == 0){
+    printf("Please enter a valid song\n");
+    return false;
+  }
+
+  return false;
 }
