@@ -113,13 +113,9 @@ void * clientHandler(void* arg){
 
      queue_put(music_queue, read_message);
     }
-   
-    for(int i = 0; i < strlen(read_message); i++){
-      write_message[i] = toupper(read_message[i]);
-    }
 
     // Send a message to the client
-    fprintf(to_client, "%s", write_message);
+    fprintf(to_client, "%s", "Try another song name\n");
   
     // Flush the output buffer
     fflush(to_client);
