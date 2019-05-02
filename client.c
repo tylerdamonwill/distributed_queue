@@ -90,7 +90,7 @@ int main(int argc, char** argv) {
         perror("Reading from server failed");
         exit(2);
       }
-      printf("Server: %s", read_message);
+      printf("Clever AI: %s", read_message);
     }
   }
 
