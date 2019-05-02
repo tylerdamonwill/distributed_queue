@@ -4,6 +4,7 @@
 #include <unistd.h>
 #include <pthread.h>
 #include <ctype.h>
+#include <stdbool.h>
 #include "playSong.h"
 
 #include "socket.h"
@@ -17,7 +18,49 @@ typedef struct node {
 
 typedef struct queue {
   struct node* head;
-}queue_t;
+} queue_t;
+
+//error checker
+void errorChecker(int rtrVal){
+  if(rtrVal != 0){
+    perror("locking failed ");
+    exit(2);
+  }
+}
+
+void queue_put(queue_t* queue, char * element) {
+
+  node_t* newNode = (node_t*)malloc(sizeof(node_t));
+  strcpy(newNode->song_name, element);
+
+  node_t *cur = queue->head;
+  if(cur == NULL) {
+    queue->head = newNode;
+  } else {
+    while (cur->next != NULL){
+      cur = cur->next;
+    }
+    cur->next = newNode;
+  }
+
+}
+
+char * queue_take(queue_t* queue) {
+  node_t* temp = queue->head;
+
+  if(temp == NULL){
+    return "";
+  }
+
+  char static rtr[BUFFER_LEN];
+  strcpy(rtr, queue->head->song_name);
+  queue->head = queue->head->next;
+  free(temp);
+  return rtr;
+}
+
+// Initialize a new queue
+
 
 // Create the music queue
 queue_t* music_queue;
@@ -26,8 +69,8 @@ queue_t* music_queue;
 void * musicHandler (){
   while(1){
     while(music_queue->head != NULL){
-      printf("Song: %s\n", music_queue->head->song_name);
       playSong(music_queue->head->song_name);
+      queue_take(music_queue);
     }
   }
 }
@@ -72,11 +115,7 @@ void * clientHandler(void* arg){
      read_message[1] = ' ';
      read_message[2] = ' ';
 
-     node_t* song_node = malloc(sizeof(node_t));
-     strcpy(song_node->song_name, read_message);
-     printf("here\n");
-     song_node->next = NULL;
-     music_queue->head = song_node;
+     queue_put(music_queue, read_message);
     }
    
     for(int i = 0; i < strlen(read_message); i++){
