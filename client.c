@@ -67,11 +67,9 @@ int main(int argc, char** argv) {
       fflush(to_server);
 
       // Read a message from the server
-      if(fgets(read_message, BUFFER_LEN, from_server) == NULL) {
-        perror("Reading from server failed");
-        exit(2);
+      while(fgets(read_message, BUFFER_LEN, from_server) != NULL) {
+        printf("Clever AI: %s", read_message);
       }
-      printf("Server: %s", read_message);
     }
   }
 
