@@ -6,6 +6,7 @@
 #include <ctype.h>
 #include <stdbool.h>
 #include "playSong.h"
+#include "populate.h"
 
 #include "socket.h"
 
@@ -79,7 +80,7 @@ void * musicHandler (){
 void * clientHandler(void* arg){
 
   int client_socket_fd = * (int *) arg;  
-	
+
   //printf("In clientHandler: One client connected! | %d\n", client_socket_fd);
   
   // Set up file streams to access the socket
@@ -106,38 +107,74 @@ void * clientHandler(void* arg){
       exit(2);
     }
     
-   printf("Client sent: %s", read_message);
+    printf("Client sent: %s", read_message);
 
 
-   if(read_message[0] == 'a' && read_message[1] == 'd' && read_message[2] == 'd'){
+    if(read_message[0] == 'a' && read_message[1] == 'd' && read_message[2] == 'd'){
      // Substitute "add" as "   "
      read_message[0] = ' ';
      read_message[1] = ' ';
      read_message[2] = ' ';
 
-     queue_put(music_queue, read_message);
-    }
-   
-    for(int i = 0; i < strlen(read_message); i++){
-      write_message[i] = toupper(read_message[i]);
+     removeSpacesandLowerCase(read_message);
+
+     Song songs[TOTALSONGS];
+     populateLibrary(songs);
+
+     Song possibileSongs[TOTALSONGS];
+     int count = 0;
+
+     for(int i = 0; i < TOTALSONGS; i++){
+
+      char *check = strstr(songs[i].filename, read_message);
+
+      if(strcmp(read_message, songs[i].filename) == 0) {
+        queue_put(music_queue, read_message);
+      } else if (check != NULL) {
+        possibileSongs[count] = songs[i];
+        count++;
+      }
     }
 
-    // Send a message to the client
-    fprintf(to_client, "%s", write_message);
-  
-    // Flush the output buffer
-    fflush(to_client);
+    if(count != 0){
+      for(int i = 0; i < count; i++){
+        char str[BUFFER_LEN];
+        strcpy(str, "Did you mean '");
+        strcat(str, possibileSongs[i].title);
+        strcat(str, "' by '");
+        strcat(str, possibileSongs[i].artist);
+        strcat(str, "'\n");
+
+        // Send a message to the client
+        fprintf(to_client, "%s", str);
+
+        // Flush the output buffer
+        fflush(to_client);
+      }
+    } else if (count == 0){
+       // Send a message to the client
+      fprintf(to_client, "%s", "Please enter a valid song\n");
+
+      // Flush the output buffer
+      fflush(to_client);
+    }
 
   }
 
+  for(int i = 0; i < strlen(read_message); i++){
+    write_message[i] = read_message[i];
+  }
+
+}
+
 
   // Close file streams
-  fclose(to_client);
-  fclose(from_client);
+fclose(to_client);
+fclose(from_client);
   // Close sockets
-  close(client_socket_fd);
+close(client_socket_fd);
 
-  return NULL;
+return NULL;
 }
 
 int main() {
@@ -154,7 +191,7 @@ int main() {
     perror("listen failed");
     exit(2);
   }
-	
+
   printf("Server listening on port %u\n", port);
 
   music_queue = malloc(sizeof(struct queue));
