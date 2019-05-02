@@ -69,6 +69,11 @@ queue_t* music_queue;
 void * musicHandler (){
   while(1){
     while(music_queue->head != NULL){
+      /*if(music_queue->head->next != NULL){
+        printf("Next Song: %s\n", music_queue->head->next->song_name);
+      } else {
+        printf("No upcoming songs\n");
+      }*/
       playSong(music_queue->head->song_name);
       queue_take(music_queue);
     }
@@ -106,30 +111,37 @@ void * clientHandler(void* arg){
       exit(2);
     }
     
-   printf("Client sent: %s", read_message);
+    printf("Client sent: %s", read_message);
 
 
-   if(strcmp(read_message, "Invalid input\n") != 0){
+    if(strcmp(read_message, "Invalid input\n") != 0){
 
      queue_put(music_queue, read_message);
-    }
+
+    // Send a message to the client
+    fprintf(to_client, "%s", "Great song choice\n");
+    
+    // Flush the output buffer
+    fflush(to_client);
+   } else {
 
     // Send a message to the client
     fprintf(to_client, "%s", "Try another song name\n");
-  
+
     // Flush the output buffer
     fflush(to_client);
-
   }
+
+}
 
 
   // Close file streams
-  fclose(to_client);
-  fclose(from_client);
+fclose(to_client);
+fclose(from_client);
   // Close sockets
-  close(client_socket_fd);
+close(client_socket_fd);
 
-  return NULL;
+return NULL;
 }
 
 int main() {
