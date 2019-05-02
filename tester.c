@@ -13,8 +13,8 @@ int main() {
   }
 
   printf("%s\n", song);
-
-  playSong(song);
+  printf("Here %d\n", inLibrary(song));
+  printf("%s\n", song);
   
   return 0;
 }
