@@ -3,7 +3,7 @@
 
 #include <string.h>
 
-#define TOTALSONGS 8
+#define TOTALSONGS 10
 
 typedef struct Song {
   char title[50];
@@ -46,6 +46,13 @@ void populateLibrary(Song* songs){
   strcpy(songs[7].filename, "sunflower");
   strcpy(songs[7].artist, "Post Malone");
 
+  strcpy(songs[8].title, "Sponge");
+  strcpy(songs[8].filename, "sponge");
+  strcpy(songs[8].artist, "Post Malone");
+  
+  strcpy(songs[9].title, "Dog");
+  strcpy(songs[9].filename, "dog");
+  strcpy(songs[9].artist, "Posty");
 }
 
 #endif

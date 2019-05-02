@@ -16,15 +16,15 @@ void removeSpacesandLowerCase(char *str) // https://www.geeksforgeeks.org/remove
   // Traverse the given string. If current character 
   // is not space, then place it at index 'count++' 
   for (int i = 0; str[i]; i++) {
-    if (str[i] != ' ') {
+    if (str[i] != ' ' && str[i] != '\n') {
       if (str[i] >= 'A' && str[i] <= 'Z') {
       str[i] = str[i] + 32;
-    }
+      } 
       str[count++] = str[i]; // here count is 
     }
   }
   // incremented 
-  str[count] = '\0'; 
+  str[count] = '\0';
 } 
 
 

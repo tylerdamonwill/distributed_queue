@@ -4,13 +4,14 @@
 #include <unistd.h>
 #include <pthread.h>
 #include <ctype.h>
+#include "playSong.h"
 
 #include "socket.h"
 
 #define BUFFER_LEN 256
 
 typedef struct node {
-  char* song_name;
+  char song_name[BUFFER_LEN];
   struct node* next;
 }node_t;
 
@@ -19,8 +20,17 @@ typedef struct queue {
 }queue_t;
 
 // Create the music queue
-queue_t music_queue;
-music_queue->head = NULL;
+queue_t* music_queue;
+
+
+void * musicHandler (){
+  while(1){
+    while(music_queue->head != NULL){
+      printf("Song: %s\n", music_queue->head->song_name);
+      playSong(music_queue->head->song_name);
+    }
+  }
+}
 
 
 void * clientHandler(void* arg){
@@ -64,6 +74,7 @@ void * clientHandler(void* arg){
 
      node_t* song_node = malloc(sizeof(node_t));
      strcpy(song_node->song_name, read_message);
+     printf("here\n");
      song_node->next = NULL;
      music_queue->head = song_node;
     }
@@ -107,8 +118,11 @@ int main() {
 	
   printf("Server listening on port %u\n", port);
 
+  music_queue = malloc(sizeof(struct queue));
+  music_queue->head = NULL;
+  
   pthread_t playing_thread;
-  pthread_create(&thr, NULL, &clientHandler, &client_socket_fd);
+  pthread_create(&playing_thread, NULL, &musicHandler, NULL);
   
   // An infinite loop that accepts an infinite amount of clients
   while(1){
