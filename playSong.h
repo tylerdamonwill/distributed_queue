@@ -53,7 +53,7 @@ void playSong(char *song) {
 
       strcat(command, ext);
   
-      char *args[] = {"afplay", command, NULL};
+      char *args[] = {"mplayer", command, NULL};
 
       pid_t c_pid, pid;
       int status;

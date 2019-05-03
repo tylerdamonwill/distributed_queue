@@ -94,6 +94,12 @@ int main(int argc, char** argv) {
     }
   }
 
+  // Send the add message to the server
+  fprintf(to_server, "%s\n", "quit");
+  
+  // Flush the add message to_server buffer
+  fflush(to_server);
+
   // Send a useful quit message
   printf("quitting...\n");  
   

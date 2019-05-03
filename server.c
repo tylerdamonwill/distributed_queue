@@ -5,22 +5,33 @@
 #include <pthread.h>
 #include <ctype.h>
 #include <stdbool.h>
-#include "playSong.h"
 
+#include "playSong.h"
 #include "socket.h"
 
-#define BUFFER_LEN 256
 
+// TODO: 1. Print some useful information about the queue in server/client?
+// TODO: 2. Add lock to the global queue to prevent multiple users adding songs at the same time
+
+
+// This is a hard limit on how many bits the server and clients can send to each other
+#define BUFFER_LEN 255
+
+// Structure that holds song name and the information of the next node
 typedef struct node {
   char song_name[BUFFER_LEN];
   struct node* next;
 }node_t;
 
+// Structure that holds the first song node
 typedef struct queue {
   struct node* head;
 } queue_t;
 
-//error checker
+// Create the music queue
+queue_t* music_queue;
+
+// Error checker function
 void errorChecker(int rtrVal){
   if(rtrVal != 0){
     perror("locking failed ");
@@ -28,66 +39,71 @@ void errorChecker(int rtrVal){
   }
 }
 
+// This function puts an element at the end of a queue
 void queue_put(queue_t* queue, char * element) {
 
+  // Create a new node with the song's name
   node_t* newNode = (node_t*)malloc(sizeof(node_t));
   strcpy(newNode->song_name, element);
+  newNode->next = NULL;
 
   node_t *cur = queue->head;
+  
   if(cur == NULL) {
+
+    // If the queue is empty, just let head be the new node
     queue->head = newNode;
-  } else {
+  } else {   // If the queue is not empty
+
     while (cur->next != NULL){
+      // If the current node is not the last node in the queue, move the cur pointer to the next node
       cur = cur->next;
     }
+    // If the current node is the last node in the queue, add the new node after the current node
     cur->next = newNode;
   }
-
 }
 
-char * queue_take(queue_t* queue) {
+// This function takes the first element off a queue
+void queue_take(queue_t* queue) {
   node_t* temp = queue->head;
-
+  
+  // If the queue is empty, there is no element to dequeue, do nothing
   if(temp == NULL){
-    return "";
-  }
-
-  char static rtr[BUFFER_LEN];
-  strcpy(rtr, queue->head->song_name);
+    return;
+  } else {
+    
+  // If the queue is not empty, dequeue the first node
   queue->head = queue->head->next;
   free(temp);
-  return rtr;
+  }
 }
 
-// Initialize a new queue
-
-
-// Create the music queue
-queue_t* music_queue;
-
-
+// This thread plays the songs in the global music queue
 void * musicHandler (){
+  
+  // This thread keeps running indefinitely until server quits
   while(1){
+    
+    // Keeps checking if the music queue is not empty
     while(music_queue->head != NULL){
-      /*if(music_queue->head->next != NULL){
-        printf("Next Song: %s\n", music_queue->head->next->song_name);
-      } else {
-        printf("No upcoming songs\n");
-      }*/
+      
+      // Play the first song in the queue, and dequeue the first song
       playSong(music_queue->head->song_name);
       queue_take(music_queue);
     }
   }
 }
 
-
+// This thread handle a client's request
 void * clientHandler(void* arg){
 
+  // Get the client socket file discriptor's number
   int client_socket_fd = * (int *) arg;  
   
   //printf("In clientHandler: One client connected! | %d\n", client_socket_fd);
   
-  // Set up file streams to access the socket
+  // Set up file streams to access the client socket
   FILE* to_client = fdopen(dup(client_socket_fd), "wb");
   if(to_client == NULL) {
     perror("Failed to open stream to client");
@@ -100,49 +116,55 @@ void * clientHandler(void* arg){
     exit(2);
   }
 
-  // Receive a message from the client
+  // Set up message buffers to receive from/send to the file streams created above
   char read_message[BUFFER_LEN] = "";
   char write_message[BUFFER_LEN];
 
-  while(strcmp(read_message,"quit\n")) {
-    // Get inputs from stdin
+  
+  // Get inputs from client
+  if(fgets(read_message, BUFFER_LEN, from_client) == NULL) {
+    perror("Reading from client failed");
+    exit(2);
+  }
+
+  // Keep handling a client's requests until client enters "quit"
+  while(strcmp(read_message, "quit\n")) {
+    //printf("Bool: %d", strcmp(read_message, "quit\n"));
+    //printf("Client sent: %s", read_message);
+
+    if(strcmp(read_message, "Invalid input\n") != 0){
+
+      // If client's input is valid, put client's input into the global queue
+      queue_put(music_queue, read_message);
+
+      // Send a message to the client
+      fprintf(to_client, "%s", "Great song choice\n");
+      fflush(to_client);
+      
+    } else { // If a client sends an invalid input
+
+      // Send a message to the client
+      fprintf(to_client, "%s", "Try another song name\n");
+      fflush(to_client);
+    }
+
+    // Get inputs from client
     if(fgets(read_message, BUFFER_LEN, from_client) == NULL) {
       perror("Reading from client failed");
       exit(2);
     }
-    
-    printf("Client sent: %s", read_message);
-
-
-    if(strcmp(read_message, "Invalid input\n") != 0){
-
-     queue_put(music_queue, read_message);
-
-    // Send a message to the client
-    fprintf(to_client, "%s", "Great song choice\n");
-    
-    // Flush the output buffer
-    fflush(to_client);
-   } else {
-
-    // Send a message to the client
-    fprintf(to_client, "%s", "Try another song name\n");
-
-    // Flush the output buffer
-    fflush(to_client);
   }
 
-}
-
-
   // Close file streams
-fclose(to_client);
-fclose(from_client);
-  // Close sockets
-close(client_socket_fd);
+  fclose(to_client);
+  fclose(from_client);
+  // Close the socket
+  close(client_socket_fd);
 
-return NULL;
+  return NULL;
 }
+
+
 
 int main() {
   // Open a server socket
@@ -155,31 +177,35 @@ int main() {
 
   // Start listening for connections, with a maximum of five queued connection
   if(listen(server_socket_fd, 5)) {
-    perror("listen failed");
+    perror("Listening failed");
     exit(2);
   }
-  
+
+  // Print the server port number so clients can connect
   printf("Server listening on port %u\n", port);
 
+  // Malloc memory for the global music queue
   music_queue = malloc(sizeof(struct queue));
   music_queue->head = NULL;
-  
+
+  // Create a thread that plays the songs in the global music queue
   pthread_t playing_thread;
   pthread_create(&playing_thread, NULL, &musicHandler, NULL);
   
-  // An infinite loop that accepts an infinite amount of clients
+  // Infinite loop that accepts an indeterminate amount of clients
   while(1){
+  
     // Wait for a client to connect
     int client_socket_fd = server_socket_accept(server_socket_fd);
     if(client_socket_fd == -1) {
-      perror("accept failed");
+      perror("Accept failed");
       exit(2);
     }
 
-    pthread_t thr;
-
+    // Create a client thread to handle this client's request
+    pthread_t client_thread;
     printf("In Main: One client connected! | %d\n", client_socket_fd);
-    pthread_create(&thr, NULL, &clientHandler, &client_socket_fd);
+    pthread_create(&client_thread, NULL, &clientHandler, &client_socket_fd);  
   }
 
   return 0;
