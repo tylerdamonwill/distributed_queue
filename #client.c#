@@ -10,6 +10,7 @@
 #define BUFFER_LEN 255
 
 int main(int argc, char** argv) {
+  // Prompt the user 
   if(argc != 4) {
     fprintf(stderr, "Usage: %s <user name> <server name> <port>\n", argv[0]);
     exit(1);

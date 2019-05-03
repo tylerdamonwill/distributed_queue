@@ -11,7 +11,7 @@
 
 
 // TODO: 1. Print some useful information about the queue in server/client?
-// TODO: 2. Add lock to the global queue to prevent multiple users adding songs at the same time
+// Clients can only quit by typing "quit"; if a client try to quit via ctrl-c, the server will crush and there will be a "connection reset by peer" error message shown on the client side.
 
 
 // This is a hard limit on how many bits the server and clients can send to each other
@@ -39,9 +39,14 @@ void errorChecker(int rtrVal){
   }
 }
 
+//create global lock
+pthread_mutex_t lock;
+
 // This function puts an element at the end of a queue
 void queue_put(queue_t* queue, char * element) {
-
+  // Lock global lock 
+  if(pthread_mutex_lock(&lock)) exit(2);
+  
   // Create a new node with the song's name
   node_t* newNode = (node_t*)malloc(sizeof(node_t));
   strcpy(newNode->song_name, element);
@@ -62,14 +67,21 @@ void queue_put(queue_t* queue, char * element) {
     // If the current node is the last node in the queue, add the new node after the current node
     cur->next = newNode;
   }
+  // Unlock global lock 
+  if(pthread_mutex_unlock(&lock)) exit(2);
 }
 
 // This function takes the first element off a queue
 void queue_take(queue_t* queue) {
+  // Lock global lock 
+  if(pthread_mutex_lock(&lock)) exit(2);
+  
   node_t* temp = queue->head;
   
   // If the queue is empty, there is no element to dequeue, do nothing
   if(temp == NULL){
+    // Unlock global lock 
+  if(pthread_mutex_unlock(&lock)) exit(2);
     return;
   } else {
     
@@ -77,6 +89,8 @@ void queue_take(queue_t* queue) {
   queue->head = queue->head->next;
   free(temp);
   }
+  // Unlock global lock 
+  if(pthread_mutex_unlock(&lock)) exit(2);
 }
 
 // This thread plays the songs in the global music queue
@@ -167,6 +181,8 @@ void * clientHandler(void* arg){
 
 
 int main() {
+  // Initialize global lock
+  if(pthread_mutex_init(&lock, NULL)) exit(2);
   // Open a server socket
   unsigned short port = 0;
   int server_socket_fd = server_socket_open(&port);
