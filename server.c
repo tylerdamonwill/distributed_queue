@@ -99,14 +99,8 @@ void queue_print(queue_t* queue, FILE* to_client) {
   if(pthread_mutex_lock(&lock)) exit(2);
   
   node_t* cur = queue->head;
-  if(cur == NULL){
-    fprintf(to_client, "%s", "End of queue\n");
-    fflush(to_client);
-    if(pthread_mutex_unlock(&lock)) exit(2);
-    return;
-  }
   
-  while (cur->next != NULL){
+  while (cur != NULL){
     // If the current node is not the last node in the queue, move the cur pointer to the next node
     fprintf(to_client, "%s", cur->song_name);
     fflush(to_client);
