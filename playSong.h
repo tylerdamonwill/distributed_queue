@@ -133,3 +133,21 @@ bool inLibrary(char *song) {
 
   return false;
 }
+
+void printLibrary() {  
+  Song songs[TOTALSONGS];
+  populateLibrary(songs);
+
+  printf( "Library Includes\n");
+  for(int i = 0; i < TOTALSONGS; i++){
+      // Send a song
+    char curSong[255];
+    strcpy(curSong, "'");
+    strcat(curSong, songs[i].title);
+    strcat(curSong, "' by '");
+    strcat(curSong, songs[i].artist);
+    strcat(curSong, "'");
+    printf("%s\n", curSong);
+  }
+  
+}

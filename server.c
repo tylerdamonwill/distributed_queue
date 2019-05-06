@@ -93,6 +93,32 @@ void queue_take(queue_t* queue) {
   if(pthread_mutex_unlock(&lock)) exit(2);
 }
 
+// This function prints songs from the queue
+void queue_print(queue_t* queue, FILE* to_client) {
+  // Lock global lock 
+  if(pthread_mutex_lock(&lock)) exit(2);
+  
+  node_t* cur = queue->head;
+  if(cur == NULL){
+    fprintf(to_client, "%s", "End of queue\n");
+    fflush(to_client);
+    if(pthread_mutex_unlock(&lock)) exit(2);
+    return;
+  }
+  
+  while (cur->next != NULL){
+    // If the current node is not the last node in the queue, move the cur pointer to the next node
+    fprintf(to_client, "%s", cur->song_name);
+    fflush(to_client);
+    cur = cur->next;
+  }
+   fprintf(to_client, "%s", "End of queue\n");
+   fflush(to_client);
+
+  // Unlock global lock 
+  if(pthread_mutex_unlock(&lock)) exit(2);
+}
+
 // This thread plays the songs in the global music queue
 void * musicHandler (){
   
@@ -143,23 +169,24 @@ void * clientHandler(void* arg){
 
   // Keep handling a client's requests until client enters "quit"
   while(strcmp(read_message, "quit\n")) {
-    //printf("Bool: %d", strcmp(read_message, "quit\n"));
-    //printf("Client sent: %s", read_message);
-
-    if(strcmp(read_message, "Invalid input\n") != 0){
-
-      // If client's input is valid, put client's input into the global queue
-      queue_put(music_queue, read_message);
-
-      // Send a message to the client
-      fprintf(to_client, "%s", "Great song choice\n");
-      fflush(to_client);
+    if (strcmp(read_message, "view queue\n") == 0) {
+      // Print the queue
+      queue_print(music_queue, to_client);
       
-    } else { // If a client sends an invalid input
+    } else if (strcmp(read_message, "Invalid input\n") == 0) {
+       // If a client sends an invalid input
 
       // Send a message to the client
       fprintf(to_client, "%s", "Try another song name\n");
       fflush(to_client);
+    } else if(strcmp(read_message, "\n") != 0) {
+      // If client's input is valid, put client's input into the global queue
+      queue_put(music_queue, read_message);
+
+      // Send a message to the client
+      fprintf(to_client, "%s", "Song added successfully: Great song choice\n");
+      fflush(to_client);
+      
     }
 
     // Get inputs from client
