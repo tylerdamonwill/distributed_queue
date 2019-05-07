@@ -47,6 +47,12 @@ int main(int argc, char** argv) {
   char read_message[BUFFER_LEN];
  
   while(strcmp(write_message, "quit\n")){
+    // Lower case string from client
+    for(int i = 0; i < strlen(write_message); i++){
+      if (write_message[i] >= 'A' && write_message[i] <= 'Z') {
+      write_message[i] = write_message[i] + 32;
+      } 
+    }
 
     // Get inputs from stdin
     if(fgets(write_message, BUFFER_LEN, stdin) == NULL) {
