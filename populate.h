@@ -12,6 +12,7 @@ typedef struct Song {
   int length;
 } Song;
 
+// Populate song library
 void populateLibrary(Song* songs){
 
   strcpy(songs[0].title, "Still Here");

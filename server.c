@@ -10,7 +10,6 @@
 #include "socket.h"
 
 
-// TODO: 1. Print some useful information about the queue in server/client?
 // Clients can only quit by typing "quit"; if a client try to quit via ctrl-c, the server will crush and there will be a "connection reset by peer" error message shown on the client side.
 
 
@@ -101,11 +100,13 @@ void queue_print(queue_t* queue, FILE* to_client) {
   node_t* cur = queue->head;
   
   while (cur != NULL){
-    // If the current node is not the last node in the queue, move the cur pointer to the next node
+    // If the current node is not the last node in the queue, send cur->song_name to client and move the cur pointer to the next node
     fprintf(to_client, "%s", cur->song_name);
     fflush(to_client);
     cur = cur->next;
   }
+
+  // Send deliminating string to client when the end of queue is reached
    fprintf(to_client, "%s", "End of queue\n");
    fflush(to_client);
 

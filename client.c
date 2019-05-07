@@ -85,6 +85,7 @@ int main(int argc, char** argv) {
       }
       printf("Clever AI: %s", read_message);
     } else if (strcmp(write_message, "view library\n") == 0){
+      // Print the song library
       printLibrary();
     } else if (strcmp(write_message, "view queue\n") == 0){
       // Send the add message to the server
@@ -92,11 +93,13 @@ int main(int argc, char** argv) {
   
       // Flush the add message to_server buffer
       fflush(to_server);
-        
+
+      // Get message from server
       if(fgets(read_message, BUFFER_LEN, from_server) == NULL) {
         perror("Reading from server failed");
         exit(2);
       }
+      // Print song messages from server until end of queue is reached
       while (strcmp(read_message, "End of queue\n") != 0){
         printf("%s", read_message);
         if(fgets(read_message, BUFFER_LEN, from_server) == NULL) {
