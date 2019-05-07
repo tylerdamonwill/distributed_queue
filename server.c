@@ -107,8 +107,8 @@ void queue_print(queue_t* queue, FILE* to_client) {
   }
 
   // Send deliminating string to client when the end of queue is reached
-   fprintf(to_client, "%s", "End of queue\n");
-   fflush(to_client);
+  fprintf(to_client, "%s", "End of queue\n");
+  fflush(to_client);
 
   // Unlock global lock 
   if(pthread_mutex_unlock(&lock)) exit(2);
