@@ -2,9 +2,13 @@
 #include <string.h>
 #include <stdlib.h>
 #include <unistd.h>
-
+#include <sys/time.h>
 #include "playSong.h"
 #include "socket.h"
+
+
+//global testing variable to fetch time
+struct timeval stop, start;
 
 // This is a hard limit on how many bits the server and clients can send to each other
 #define BUFFER_LEN 255
@@ -19,7 +23,7 @@ int main(int argc, char** argv) {
   char* user_name = argv[1];
   char* server_name = argv[2];
   unsigned short port = atoi(argv[3]);
-  
+ 
   // Connect to the server
   int socket_fd = socket_connect(server_name, port);
   if(socket_fd == -1) {
@@ -33,7 +37,6 @@ int main(int argc, char** argv) {
     perror("Failed to open stream to server");
     exit(2);
   }
-  
   FILE* from_server = fdopen(dup(socket_fd), "rb");
   if(from_server == NULL) {
     perror("Failed to open stream from server");
@@ -68,6 +71,10 @@ int main(int argc, char** argv) {
   
     // If the input is add, parse the input before send it to the server
     if(write_message[0] == 'a' && write_message[1] == 'd' && write_message[2] == 'd'){
+      
+      // Get start time 
+      gettimeofday(&start, NULL);
+      
       // Substitute the substring "add" with spaces
       write_message[0] = ' ';
       write_message[1] = ' ';
@@ -94,16 +101,29 @@ int main(int argc, char** argv) {
       
       // Print the message from server
       printf("Clever AI: %s", read_message);
+
+      // Get after time and print the interval
+      gettimeofday(&stop, NULL);
+      printf("took %lu\n", stop.tv_usec - start.tv_usec);
     }
 
     // If the input is view library
     else if (strcmp(write_message, "view library\n") == 0){
+      // Get start time 
+      gettimeofday(&start, NULL);
+      
       // Print the library
       printLibrary();
+
+      // Get after time and print the interval
+      gettimeofday(&stop, NULL);
+      printf("took %lu\n", stop.tv_usec - start.tv_usec);
     }
     
     // If the input is view queue
     else if (strcmp(write_message, "view queue\n") == 0){
+     // Get start time 
+      gettimeofday(&start, NULL);
       
       // Send the view message to the server
       fprintf(to_server, "%s\n", write_message);
@@ -124,6 +144,10 @@ int main(int argc, char** argv) {
         }
       }
       printf("%s", read_message);
+      
+      // Get after time and print the interval
+      gettimeofday(&stop, NULL);
+      printf("took %lu\n", stop.tv_usec - start.tv_usec);
     }
   }
 
