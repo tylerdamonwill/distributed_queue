@@ -41,7 +41,7 @@ int main(int argc, char** argv) {
   }
 
   // Print instructions of how to use the program
-  printf("\nHi, I'm a clever AI that handles the fun music queue you share with other cs students!\nTo add a song, type \"add <name of the song>\" \nTo view the library, type \"view library\" \nTo view the current queue, type \"view queue\" \nTo quit, type \"quit\" \n");
+  printf("\nHi, I'm a clever AI that handles the fun Musi-Q you share with other cs students!\nTo add a song, type \"add <name of the song>\" \nTo view the library, type \"view library\" \nTo view the current Musi-Q, type \"view queue\" \nTo quit, type \"quit\" \n");
   
   char write_message[BUFFER_LEN] = "";
   char read_message[BUFFER_LEN];
@@ -62,50 +62,60 @@ int main(int argc, char** argv) {
     
     // Make sure the input is not just '\n'
     while (write_message[0] == '\n'){
-      printf("Don't send an empty message to the server, type \"add <name of the song>\" or \"quit\" \n");
+      printf("Don't send an empty message to the server, type \"add <name of the song>\" or \"view library\" or \"view queue\" or \"quit\" \n");
       fgets(write_message, BUFFER_LEN, stdin);
     }
   
-    // if the input is add
+    // If the input is add, parse the input before send it to the server
     if(write_message[0] == 'a' && write_message[1] == 'd' && write_message[2] == 'd'){
+      // Substitute the substring "add" with spaces
       write_message[0] = ' ';
       write_message[1] = ' ';
       write_message[2] = ' ';
 
+      // If the input song is in library
       if(inLibrary(write_message)){
         // Send the add message to the server
         fprintf(to_server, "%s\n", write_message);
-  
-        // Flush the add message to_server buffer
         fflush(to_server);
-      } else {
+        
+      } else { // If the input song is not in library
+        
+        // Send the add message to the server
         fprintf(to_server, "%s\n", "Invalid input");
-  
-        // Flush the add message to_server buffer
         fflush(to_server);
       }
-      // Read a message from the server
+      
+      // Read a message from the server after sending the add message
       if(fgets(read_message, BUFFER_LEN, from_server) == NULL) {
         perror("Reading from server failed");
         exit(2);
       }
+      
+      // Print the message from server
       printf("Clever AI: %s", read_message);
-    } else if (strcmp(write_message, "view library\n") == 0){
-      // Print the song library
+    }
+
+    // If the input is view library
+    else if (strcmp(write_message, "view library\n") == 0){
+      // Print the library
       printLibrary();
-    } else if (strcmp(write_message, "view queue\n") == 0){
-      // Send the add message to the server
+    }
+    
+    // If the input is view queue
+    else if (strcmp(write_message, "view queue\n") == 0){
+      
+      // Send the view message to the server
       fprintf(to_server, "%s\n", write_message);
-  
-      // Flush the add message to_server buffer
       fflush(to_server);
 
-      // Get message from server
+      // Get the queue information from the server
       if(fgets(read_message, BUFFER_LEN, from_server) == NULL) {
         perror("Reading from server failed");
         exit(2);
       }
-      // Print song messages from server until end of queue is reached
+      
+      // Print the current music queue to client's terminal
       while (strcmp(read_message, "End of queue\n") != 0){
         printf("%s", read_message);
         if(fgets(read_message, BUFFER_LEN, from_server) == NULL) {
