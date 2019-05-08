@@ -39,7 +39,7 @@ void playSong(char *song) {
   removeSpacesandLowerCase(song);
 
   // Create possible songs array that will be populated with songs that "song" parameter is a substring of
-  Song possibileSongs[TOTALSONGS];
+  Song possibleSongs[TOTALSONGS];
   int count = 0;
 
   // For all songs in the library
@@ -86,7 +86,7 @@ void playSong(char *song) {
       
     } else if (check != NULL) {
       // "song" was found to be a substring of song in library, add it to possibleSongs array
-      possibileSongs[count] = songs[i];
+      possibleSongs[count] = songs[i];
       count++;
     }
   }
@@ -94,7 +94,7 @@ void playSong(char *song) {
   if(count != 0){
     // "song" was not found in library, but it was a substring of "count" songs in the library, print those songs out 
     for(int i = 0; i < count; i++){
-      printf("Did you mean '%s' by '%s'\n", possibileSongs[i].title, possibileSongs[i].artist);
+      printf("Did you mean '%s' by '%s'\n", possibleSongs[i].title, possibleSongs[i].artist);
     }
   } else if (count == 0){
     // "song" was not a substring of any songs in the library, ask the user to enter a valid song
@@ -113,7 +113,7 @@ bool inLibrary(char *song) {
   removeSpacesandLowerCase(song);
 
   // Create possible songs array that will be populated with songs that "song" parameter is a substring of
-  Song possibileSongs[TOTALSONGS];
+  Song possibleSongs[TOTALSONGS];
   int count = 0;
 
   // For all songs in the library
@@ -126,7 +126,7 @@ bool inLibrary(char *song) {
       return true;
     } else if (check != NULL) {
       // "song" was found to be a substring of song in library, add it to possibleSongs array
-      possibileSongs[count] = songs[i];
+      possibleSongs[count] = songs[i];
       count++;
     }
   }
@@ -134,7 +134,7 @@ bool inLibrary(char *song) {
   // "song" was not found in library, but it was a substring of "count" songs in the library, print those songs out
   if(count != 0){
     for(int i = 0; i < count; i++){
-      printf("Did you mean '%s' by '%s'\n", possibileSongs[i].title, possibileSongs[i].artist);
+      printf("Did you mean '%s' by '%s'\n", possibleSongs[i].title, possibleSongs[i].artist);
     }
     return false;
   } else if (count == 0){ // Else, prompt user for a valid song input
