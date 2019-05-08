@@ -164,22 +164,28 @@ void * clientHandler(void* arg){
 
   // Keep handling a client's requests until client enters "quit"
   while(strcmp(read_message, "quit\n")) {
+
+    // If the input is view queue
     if (strcmp(read_message, "view queue\n") == 0) {
       // Print the queue
       queue_print(music_queue, to_client);
       
-    } else if (strcmp(read_message, "Invalid input\n") == 0) {
-       // If a client sends an invalid input
-
-      // Send a message to the client
-      fprintf(to_client, "%s", "Try another song name\n");
+    }
+    // If the input is invalid (songname wise)
+    else if (strcmp(read_message, "Invalid input\n") == 0) {
+  
+      // Send a helpful message to the client
+      fprintf(to_client, "%s", "Try another song name, to see what we have in the library, type \"view library\", to see what other people have added to the Musi-Q, type \"view queue\" \n");
       fflush(to_client);
-    } else if(strcmp(read_message, "\n") != 0) {
-      // If client's input is valid, put client's input into the global queue
+      
+    }
+    // If client's input is valid
+    else if(strcmp(read_message, "\n") != 0) {
+      // Put client's input into the global queue
       queue_put(music_queue, read_message);
 
       // Send a message to the client
-      fprintf(to_client, "%s", "Song added successfully: Great song choice\n");
+      fprintf(to_client, "%s", "Song added successfully: great song choice!\n");
       fflush(to_client);
       
     }
