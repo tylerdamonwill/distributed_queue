@@ -96,13 +96,19 @@ void queue_take(queue_t* queue) {
 void queue_print(queue_t* queue, FILE* to_client) {
   // Lock global lock 
   if(pthread_mutex_lock(&lock)) exit(2);
+  int count = 0;
   
   node_t* cur = queue->head;
   
   while (cur != NULL){
     // If the current node is not the last node in the queue, send cur->song_name to client and move the cur pointer to the next node
-    fprintf(to_client, "%s", cur->song_name);
-    fflush(to_client);
+    if (count == 0){
+      fprintf(to_client, "%s\n", cur->song_name);
+      fflush(to_client);
+    } else if (count != 0) {
+      fprintf(to_client, "%s", cur->song_name);
+      fflush(to_client);
+    }
     cur = cur->next;
   }
 
@@ -167,7 +173,6 @@ void * clientHandler(void* arg){
 
     // If the input is view queue
     if (strcmp(read_message, "view queue\n") == 0) {
-      fprintf(to_client, "%s", "Clever AI: Here's what's coming up next!\n");
       // Print the queue
       queue_print(music_queue, to_client);
       
