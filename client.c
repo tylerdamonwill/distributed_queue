@@ -18,12 +18,16 @@ int main(int argc, char** argv) {
     fprintf(stderr, "Usage: %s <user name> <server name> <port>\n", argv[0]);
     exit(1);
   }
+
+        
+  // Get start time 
+  gettimeofday(&start, NULL);
   
   // Read command line arguments
   char* user_name = argv[1];
   char* server_name = argv[2];
   unsigned short port = atoi(argv[3]);
- 
+
   // Connect to the server
   int socket_fd = socket_connect(server_name, port);
   if(socket_fd == -1) {
@@ -42,9 +46,13 @@ int main(int argc, char** argv) {
     perror("Failed to open stream from server");
     exit(2);
   }
-
+  
+  // Get after time and print the interval
+  gettimeofday(&stop, NULL);
+  printf("took %lu\n", stop.tv_usec - start.tv_usec);
+  
   // Print instructions of how to use the program
-  printf("\nHi, I'm a clever AI that handles the fun Musi-Q you share with other cs students!\nTo add a song, type \"add <name of the song>\" \nTo view the library, type \"view library\" \nTo view the current Musi-Q, type \"view queue\" \nTo quit, type \"quit\" \n");
+  printf("\nHi, I'm a clever AI that handles the fun Musi-Q you share with other cs students!\nTo add a song to the Musi-Q, type \"add <name of the song>\" \nTo view the library, type \"view library\" \nTo view the current Musi-Q, type \"view queue\" \nTo quit, type \"quit\" \n");
   
   char write_message[BUFFER_LEN] = "";
   char read_message[BUFFER_LEN];
