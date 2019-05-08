@@ -167,6 +167,7 @@ void * clientHandler(void* arg){
 
     // If the input is view queue
     if (strcmp(read_message, "view queue\n") == 0) {
+      fprintf(to_client, "%s", "Clever AI: Here's what's coming up next!\n");
       // Print the queue
       queue_print(music_queue, to_client);
       
