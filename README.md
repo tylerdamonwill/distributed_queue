@@ -29,26 +29,29 @@ Step 2: Run the Make file
 make
 ```
 
-Step 3 (Server side): Start the server
+Step 3: (Server side) Start the server
 ```
 ./server
 ```
-TO DO: Gif on server side
 
-Step 3 (Server side): Start a client
+Step 3: (Client side) Add a client
 ```
-./client
-```
-TO DO: Gif on client side
-
-Step 4: Add a song to the queue
-```
-blah blah blah
+./client <username> <computername> <port name>
 ```
 
-Step 5: View songs in the queue
+Step 4: (Client side) Add a song to the queue
 ```
-blah blah blah
+add <song>
+```
+
+Step 5: (Client side) View songs in the queue
+```
+view queue
+```
+
+Step 6: (Client side) View songs in the library
+```
+view library
 ```
 ## Authors
 
