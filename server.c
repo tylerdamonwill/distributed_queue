@@ -101,15 +101,21 @@ void queue_print(queue_t* queue, FILE* to_client) {
   fprintf(to_client, "%s", "Queue Includes-------------------------------\n");
   fflush(to_client);
 
+  // Populate songs to compare with songs in queue
   Song songs[TOTALSONGS];
   populateLibrary(songs);
   char songName[BUFFER_LEN];
   
   while (cur != NULL){
     // If the current node is not the last node in the queue, send cur->song_name to client and move the cur pointer to the next node
+
+    // Find cur->song_name in queue and print the formatted song title name with corresponding artist
     for (int i = 0; i < TOTALSONGS; i++){
       if(strncmp(songs[i].filename, cur->song_name, strlen(songs[i].filename)) == 0){
         strcpy(songName, songs[i].title);
+        strcat(songName, " by '");
+        strcat(songName, songs[i].artist);
+        strcat(songName, "'");
       }
     }
     fprintf(to_client, "%s\n", songName);
