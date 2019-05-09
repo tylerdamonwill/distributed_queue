@@ -9,7 +9,6 @@ typedef struct Song {
   char title[50];
   char filename[50];
   char artist[50];
-  int length;
 } Song;
 
 // Populate song library
