@@ -149,7 +149,7 @@ void printLibrary() {
   Song songs[TOTALSONGS];
   populateLibrary(songs);
 
-  printf( "Library Includes\n");
+  printf( "Library Includes-------------------------------------\n");
   for(int i = 0; i < TOTALSONGS; i++){
       // Send a song
     char curSong[255];
@@ -160,5 +160,6 @@ void printLibrary() {
     strcat(curSong, "'");
     printf("%s\n", curSong);
   }
+  printf( "End of Library---------------------------------------\n");
   
 }
