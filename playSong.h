@@ -54,7 +54,7 @@ void playSong(char *song) {
 
       strcat(command, ext);
   
-      char *args[] = {"mplayer", command, NULL};
+      char *args[] = {"mplayer", command, NULL}; //afplay for mac
 
       pid_t c_pid, pid;
       int status;
