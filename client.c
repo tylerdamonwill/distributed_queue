@@ -49,7 +49,7 @@ int main(int argc, char** argv) {
   
   // Get after time and print the interval
   gettimeofday(&stop, NULL);
-  //printf("took %lu\n", stop.tv_usec - start.tv_usec);
+  printf("took %lu\n", stop.tv_usec - start.tv_usec);
   
   // Print instructions of how to use the program
   printf("\nHi, I'm a clever AI that handles the fun Musi-Q you share with other cs students!\nTo add a song to the Musi-Q, type \"add <name of the song>\" \nTo view the library, type \"view library\" \nTo view the current Musi-Q, type \"view queue\" \nTo quit, type \"quit\" \n");
@@ -112,7 +112,7 @@ int main(int argc, char** argv) {
 
       // Get after time and print the interval
       gettimeofday(&stop, NULL);
-      //printf("took %lu\n", stop.tv_usec - start.tv_usec);
+      printf("took %lu\n", stop.tv_usec - start.tv_usec);
     }
 
     // If the input is view library
@@ -125,7 +125,7 @@ int main(int argc, char** argv) {
 
       // Get after time and print the interval
       gettimeofday(&stop, NULL);
-      //printf("took %lu\n", stop.tv_usec - start.tv_usec);
+      printf("took %lu\n", stop.tv_usec - start.tv_usec);
     }
     
     // If the input is view queue
