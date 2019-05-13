@@ -112,8 +112,9 @@ void queue_print(queue_t* queue, FILE* to_client) {
     // Find cur->song_name in queue and print the formatted song title name with corresponding artist
     for (int i = 0; i < TOTALSONGS; i++){
       if(strncmp(songs[i].filename, cur->song_name, strlen(songs[i].filename)) == 0){
-        strcpy(songName, songs[i].title);
-        strcat(songName, " by '");
+        strcpy(songName, "'");
+        strcat(songName, songs[i].title);
+        strcat(songName, "' by '");
         strcat(songName, songs[i].artist);
         strcat(songName, "'");
       }
