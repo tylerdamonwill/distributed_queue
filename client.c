@@ -2,7 +2,6 @@
 #include <string.h>
 #include <stdlib.h>
 #include <unistd.h>
-#include <sys/time.h>
 #include "playSong.h"
 #include "socket.h"
 
@@ -18,10 +17,6 @@ int main(int argc, char** argv) {
     fprintf(stderr, "Usage: %s <user name> <server name> <port>\n", argv[0]);
     exit(1);
   }
-
-        
-  // Get start time 
-  //gettimeofday(&start, NULL);
   
   // Read command line arguments
   char* user_name = argv[1];
@@ -46,10 +41,6 @@ int main(int argc, char** argv) {
     perror("Failed to open stream from server");
     exit(2);
   }
-  
-  // Get after time and print the interval for testing purposes
-  //gettimeofday(&stop, NULL);
-  //printf("took %lu\n", stop.tv_usec - start.tv_usec);
   
   // Print instructions of how to use the program
   printf("\nHi, I'm a clever AI that handles the fun Musi-Q you share with other cs students!\nTo add a song to the Musi-Q, type \"add <name of the song>\" \nTo view the library, type \"view library\" \nTo view the current Musi-Q, type \"view queue\" \nTo quit, type \"quit\" \n");
@@ -80,9 +71,6 @@ int main(int argc, char** argv) {
     // If the input is add, parse the input before send it to the server
     if(write_message[0] == 'a' && write_message[1] == 'd' && write_message[2] == 'd'){
       
-      // Get start time 
-      //gettimeofday(&start, NULL);
-      
       // Substitute the substring "add" with spaces
       write_message[0] = ' ';
       write_message[1] = ' ';
@@ -109,29 +97,17 @@ int main(int argc, char** argv) {
       
       // Print the message from server
       printf("Clever AI: %s", read_message);
-
-      // Get after time and print the interval for testing purposes
-      //gettimeofday(&stop, NULL);
-      //printf("took %lu\n", stop.tv_usec - start.tv_usec);
     }
 
     // If the input is view library
     else if (strcmp(write_message, "view library\n") == 0){
-      // Get start time 
-      gettimeofday(&start, NULL);
       
       // Print the library
       printLibrary();
-
-      // Get after time and print the interval for testing purposes
-      //gettimeofday(&stop, NULL);
-      //printf("took %lu\n", stop.tv_usec - start.tv_usec);
     }
     
     // If the input is view queue
     else if (strcmp(write_message, "view queue\n") == 0){
-     // Get start time 
-     // gettimeofday(&start, NULL);
       
       // Send the view message to the server
       fprintf(to_server, "%s\n", write_message);
@@ -153,9 +129,6 @@ int main(int argc, char** argv) {
       }
       printf("%s", read_message);
       
-      // Get after time and print the interval for testing purposes
-      //gettimeofday(&stop, NULL);
-      //printf("took %lu\n", stop.tv_usec - start.tv_usec);
     } else {
       printf("INVALID INPUT: type \"add <name of the song>\" or \"view library\" or \"view queue\" or \"quit\"\n");
     }
